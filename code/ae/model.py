@@ -97,7 +97,12 @@ class myModel(object):
         # define summaries
         self.summaryTraining = tf.summary.scalar("loss_training",self.loss)        
         self.summaryTest     = tf.summary.scalar("loss_test",self.loss)        
+        
+        self.summaryImgOrig   = tf.summary.image("input image",tf.reshape(self.x,[1,28,28,1]))
+        self.summaryImgRecon  = tf.summary.image("reconstructed image",tf.reshape(self.y_hat,[1,28,28,1]))
         self.merged_summary = tf.summary.merge_all()
+
+
         self.writer = tf.summary.FileWriter(log_dir,self.session.graph)
 
         self.init_done = True
@@ -136,3 +141,9 @@ class myModel(object):
                                     self.y_true: y_true})
         self.writer.add_summary(summary_test,self.ITER)
         return loss
+
+    def reconstruct(self,x):
+        imgOrig,imgRecon = self.session.run([self.summaryImgOrig,self.summaryImgRecon],feed_dict={self.x: np.expand_dims(x,axis=0)})
+        self.writer.add_summary(imgOrig,self.ITER)
+        self.writer.add_summary(imgRecon,self.ITER)
+
