@@ -2,13 +2,15 @@
 runner function for autoencoder 
 Timo Flesch, 2017
 """
-import numpy as np
+# external
+import numpy      as np
 import tensorflow as tf
 
-from ae.model   import         myModel
-from trainer    import      trainModel
-from evaluation import       evalModel
-from tfio.io    import     loadMyModel
+# custom
+from ae.model           import         myModel
+from nntools.trainer    import      trainModel
+from nntools.evaluation import       evalModel
+from nntools.io         import     loadMyModel
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -38,8 +40,9 @@ def runAE(x_train,x_test):
         else:           
             nnet = myModel(is_trained=True)
             print("Now evaluating Autoencoder")
-            ops = loadModel(sess,ckpt_dir_run)
-            nnet.y_ = ops[0]
+            ops = loadMyModel(sess,['nnet'],ckpt_dir_run)
+            print(ops)
+            nnet.y_hat = ops[0]
 
             results = evalModel(sess,nnet)
 

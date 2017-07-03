@@ -8,6 +8,6 @@ def trainModel(sess,nnet,x_train,x_test,n_steps=1000,batch_size=128,model_dir='.
 		# every nth step, evaluate on test data
 		x = 1;
 		if (ep%100):
-			nnet.save_ckpt(model_dir)
+			nnet.save_ckpt(model_dir + '/')
 
 	

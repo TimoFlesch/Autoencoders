@@ -4,11 +4,11 @@ Timo Flesch, 2017
 """
 
 import os
-import numpy as np 
+import numpy      as np 
 import tensorflow as tf 
 
-from tfio.io import saveMyModel
-from layers import *
+from nntools.io     import saveMyModel
+from nntools.layers import *
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -95,7 +95,8 @@ class myModel(object):
         self.saver = tf.train.Saver()
 
         # define summaries
-        tf.summary.scalar("loss",self.loss)        
+        self.summaryTraining = tf.summary.scalar("loss",self.loss)        
+        self.summaryTest     = tf.summary.scalar("loss",self.loss)        
         self.merged_summary = tf.summary.merge_all()
         self.writer = tf.summary.FileWriter(log_dir,self.session.graph)
 
@@ -111,7 +112,7 @@ class myModel(object):
                     self.saver,
                     saved_ops,
                     globalStep=self.ITER,
-                    model_dir=modelDir)
+                    modelName=modelDir+FLAGS.model)
 
 
     def inference(self,x):
@@ -121,7 +122,7 @@ class myModel(object):
 
 
     def update(self,x,y_true):
-        _,loss,summary = self.session.run([self.train_step,self.loss,self.merged_summary],feed_dict={self.x:            x,
+        _,loss,summary = self.session.run([self.train_step,self.loss,self.summaryTraining],feed_dict={self.x:            x,
                                        self.y_true: y_true})
-        self.writer.add_summary(merged_summary,self.ITER)
+        self.writer.add_summary(summaryTraining,self.ITER)
         self.ITER +=1 # count one iteration up

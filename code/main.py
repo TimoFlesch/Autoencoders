@@ -22,12 +22,12 @@ from ae.runAE    import    runAE # autoencoder
 FLAGS = tf.app.flags.FLAGS
 
 # directories
-tf.app.flags.DEFINE_string('data_dir',        '../data/',  """ (string) data directory       """)
+tf.app.flags.DEFINE_string('data_dir',        './data/',  """ (string) data directory       """)
 
-tf.app.flags.DEFINE_string('ckpt_dir', '../checkpoints/', 
+tf.app.flags.DEFINE_string('ckpt_dir', './checkpoints/', 
                             """ (string) checkpoint directory """)
 
-tf.app.flags.DEFINE_string('log_dir','../log/', """ (string) log/summary directory """)
+tf.app.flags.DEFINE_string('log_dir','./log/', """ (string) log/summary directory """)
 
 
 # dataset
@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_string('log_dir','../log/', """ (string) log/summary directo
 tf.app.flags.DEFINE_string('model',                'ae', 
                             """ (string)  chosen model         """)
 
-tf.app.flags.DEFINE_bool('do_training',               1, 
+tf.app.flags.DEFINE_bool('do_training',               0, 
                             """ (boolean) train or not         """)
 
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
