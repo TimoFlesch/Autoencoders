@@ -7,6 +7,7 @@ Timo Flesch, 2017
 
 # external
 import tensorflow as tf 
+import numpy      as np
 import sklearn.preprocessing as prep
 from tensorflow.examples.tutorials.mnist import input_data
 # custom
@@ -31,18 +32,18 @@ tf.app.flags.DEFINE_string('log_dir','./log/', """ (string) log/summary director
 
 
 # dataset
-#tf.app.flags.DEFINE_integer('n_samples_train', mnist.train.num_examples, 
-#                            """ (int) number of training samples """)
+tf.app.flags.DEFINE_integer('n_samples_train', 50000, 
+                           """ (int) number of training samples """)
 
-#tf.app.flags.DEFINE_integer('n_samples_test',  mnist.test.num_examples,  
-#                            """ (int) number of test samples     """)
+tf.app.flags.DEFINE_integer('n_samples_test',  10000,  
+                           """ (int) number of test samples     """)
 
 
 # model
 tf.app.flags.DEFINE_string('model',                'ae', 
                             """ (string)  chosen model         """)
 
-tf.app.flags.DEFINE_bool('do_training',               0, 
+tf.app.flags.DEFINE_bool('do_training',               1, 
                             """ (boolean) train or not         """)
 
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
@@ -56,11 +57,17 @@ tf.app.flags.DEFINE_string('nonlinearity',       'relu',
 
 
 # training
-tf.app.flags.DEFINE_float('learning_rate',     0.0005, 
+tf.app.flags.DEFINE_float('learning_rate',     0.001, 
                             """ (float)   learning rate              """)
 
-tf.app.flags.DEFINE_integer('n_training_steps',   20000, 
-                            """ (int)     number of training steps  """)
+tf.app.flags.DEFINE_integer('n_training_episodes',   20, 
+                            """ (int)    number of training episodes  """)
+
+tf.app.flags.DEFINE_integer('n_training_batches',   int(FLAGS.n_samples_train/FLAGS.n_training_episodes), 
+                            """    number of training batches per ep  """)
+
+tf.app.flags.DEFINE_integer('display_step',         1, 
+                            """(int) episodes until training log """)
 
 tf.app.flags.DEFINE_integer('batch_size',         128, 
                             """ (int)     training batch size        """)
@@ -79,12 +86,24 @@ def normalizeData(X_train, X_test):
     return x_train, x_test
 
 
+def shuffleData(x,y=None):
+    """ helper function, shuffles data """
+    ii_shuff = np.random.permutation(x.shape[0])
+    # shuffle data
+    x = x[ii_shuff,:]
+    if y is not None:
+        y = y[ii_shuff,:]
+    return x, y
+
+
 def main(argv=None): 
     """ here starts the magic """
     # import data
     mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot = True) 
     # scale data appropriately
     x_train, x_test = normalizeData(mnist.train.images, mnist.test.images)
+    x_train,_ = shuffleData(x_train)
+    x_test,_  = shuffleData(x_test)
 
     # run selected model
     if FLAGS.model=='ae':

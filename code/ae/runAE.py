@@ -33,9 +33,10 @@ def runAE(x_train,x_test):
             nnet.init_graph_vars(sess,log_dir=FLAGS.log_dir+'model_'+FLAGS.model)
             # train model
             results = trainModel(sess,nnet,x_train,x_test,
-                n_steps=FLAGS.n_training_steps,
-                batch_size=FLAGS.batch_size,
-                model_dir= ckpt_dir_run)
+                n_episodes  =  FLAGS.n_training_episodes,
+                n_batches   =   FLAGS.n_training_batches,
+                batch_size  =           FLAGS.batch_size,
+                model_dir   =               ckpt_dir_run)
 
         else:           
             nnet = myModel(is_trained=True)

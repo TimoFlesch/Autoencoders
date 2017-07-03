@@ -95,8 +95,8 @@ class myModel(object):
         self.saver = tf.train.Saver()
 
         # define summaries
-        self.summaryTraining = tf.summary.scalar("loss",self.loss)        
-        self.summaryTest     = tf.summary.scalar("loss",self.loss)        
+        self.summaryTraining = tf.summary.scalar("loss_training",self.loss)        
+        self.summaryTest     = tf.summary.scalar("loss_test",self.loss)        
         self.merged_summary = tf.summary.merge_all()
         self.writer = tf.summary.FileWriter(log_dir,self.session.graph)
 
@@ -121,8 +121,18 @@ class myModel(object):
         return y_hat
 
 
-    def update(self,x,y_true):
-        _,loss,summary = self.session.run([self.train_step,self.loss,self.summaryTraining],feed_dict={self.x:            x,
+    def train(self,x,y_true):
+        """ training step """ 
+        _,loss,summary_train = self.session.run([self.train_step,self.loss,self.summaryTraining],feed_dict={self.x:            x,
                                        self.y_true: y_true})
-        self.writer.add_summary(summaryTraining,self.ITER)
+        self.writer.add_summary(summary_train,self.ITER)
         self.ITER +=1 # count one iteration up
+        return loss
+
+
+    def eval(self,x,y_true):
+        """ evaluation step """
+        y_hat,loss,summary_test = self.session.run([self.y_hat,self.loss,self.summaryTest],feed_dict={self.x:            x,
+                                    self.y_true: y_true})
+        self.writer.add_summary(summary_test,self.ITER)
+        return loss
