@@ -49,10 +49,10 @@ class myModel(object):
             with tf.name_scope('input'):
                 self.x = tf.placeholder(tf.float32,self.dim_inputs,name='x_in')
                 self.y_true = tf.placeholder(tf.float32,self.dim_outputs,name='y_true')
+            
             # the neural network and label placeholder
             with tf.variable_scope('nnet'):
                 self.nnet_builder()
-                       
 
             # optimizer
             with tf.name_scope('optimisation'):
@@ -64,6 +64,12 @@ class myModel(object):
                 with tf.name_scope('optimizer'):
                     self.optimizer = getattr(tf.train,optimizer+'Optimizer')(learning_rate=self.learning_rate)
                     self.train_step = self.optimizer.minimize(self.loss)
+
+
+            # image reshaper
+            with tf.name_scope('reshaper'):
+                self.visIMG_orig  = tf.reshape(self.x,[1,28,28,1],name='reshape input')
+                self.visIMG_recon = tf.reshape(self.y_hat,[1,28,28,1],name='reshape output')
 
         else:
             self.init_done = True 
@@ -98,8 +104,8 @@ class myModel(object):
         self.summaryTraining = tf.summary.scalar("loss_training",self.loss)        
         self.summaryTest     = tf.summary.scalar("loss_test",self.loss)        
         
-        self.summaryImgOrig   = tf.summary.image("input image",tf.reshape(self.x,[1,28,28,1]))
-        self.summaryImgRecon  = tf.summary.image("reconstructed image",tf.reshape(self.y_hat,[1,28,28,1]))
+        self.summaryImgOrig   = tf.summary.image("input image",self.visIMG_orig)
+        self.summaryImgRecon  = tf.summary.image("reconstructed image",self.visIMG_recon)
         self.merged_summary = tf.summary.merge_all()
 
 

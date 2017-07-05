@@ -23,12 +23,14 @@ from ae.runAE    import    runAE # autoencoder
 FLAGS = tf.app.flags.FLAGS
 
 # directories
-tf.app.flags.DEFINE_string('data_dir',        './data/',  """ (string) data directory       """)
+tf.app.flags.DEFINE_string('data_dir',        './data/',  
+                           """ (string) data directory           """)
 
 tf.app.flags.DEFINE_string('ckpt_dir', './checkpoints/', 
-                            """ (string) checkpoint directory """)
+                            """ (string) checkpoint directory    """)
 
-tf.app.flags.DEFINE_string('log_dir','./log/', """ (string) log/summary directory """)
+tf.app.flags.DEFINE_string('log_dir',          './log/', 
+                           """ (string) log/summary directory    """)
 
 
 # dataset
@@ -41,36 +43,37 @@ tf.app.flags.DEFINE_integer('n_samples_test',  10000,
 
 # model
 tf.app.flags.DEFINE_string('model',                'ae', 
-                            """ (string)  chosen model         """)
+                            """ (string)  chosen model          """)
 
 tf.app.flags.DEFINE_bool('do_training',               1, 
-                            """ (boolean) train or not         """)
+                            """ (boolean) train or not          """)
 
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
-                            """ (float)   initial weight mean  """)
+                            """ (float)   initial weight mean   """)
 
 tf.app.flags.DEFINE_float('weight_init_std',        .05, 
-                            """ (float)   initial weight std   """)
+                            """ (float)   initial weight std    """)
 
 tf.app.flags.DEFINE_string('nonlinearity',       'relu', 
-                            """ (string)  activation function  """)
+                            """ (string)  activation function   """)
 
 
 # training
 tf.app.flags.DEFINE_float('learning_rate',     0.001, 
-                            """ (float)   learning rate              """)
+                            """ (float)   learning rate               """)
 
 tf.app.flags.DEFINE_integer('n_training_episodes',   20, 
                             """ (int)    number of training episodes  """)
 
-tf.app.flags.DEFINE_integer('n_training_batches',   int(FLAGS.n_samples_train/FLAGS.n_training_episodes), 
+tf.app.flags.DEFINE_integer('n_training_batches',   
+                            int(FLAGS.n_samples_train/FLAGS.n_training_episodes), 
                             """    number of training batches per ep  """)
 
 tf.app.flags.DEFINE_integer('display_step',         1, 
-                            """(int) episodes until training log """)
+                            """(int) episodes until training log      """)
 
 tf.app.flags.DEFINE_integer('batch_size',         128, 
-                            """ (int)     training batch size        """)
+                            """ (int)     training batch size         """)
 
 tf.app.flags.DEFINE_string('optimizer',       'RMSProp', 
                             """ (string)   optimisation procedure     """)
@@ -103,7 +106,7 @@ def main(argv=None):
     # scale data appropriately
     x_train, x_test = normalizeData(mnist.train.images, mnist.test.images)
     x_train,_ = shuffleData(x_train)
-    x_test,_  = shuffleData(x_test)
+    
 
     # run selected model
     if FLAGS.model=='ae':

@@ -5,7 +5,12 @@ FLAGS = tf.app.flags.FLAGS
 
 def trainModel(sess,nnet,x_train,x_test,n_episodes=100,n_batches=10,batch_size=128,model_dir='./'):
 	sess = nnet.session;
-
+	results = {}
+	images_orig          = []
+	images_reconstructed = []
+	loss_training        = []
+	loss_test            = []
+	
 	for ep in range(n_episodes):
 		# print baseline stats and save model
 		nnet.save_ckpt(model_dir + '/')
