@@ -12,7 +12,7 @@ def trainModel(sess,nnet,x_train,x_test,n_episodes=100,n_batches=10,batch_size=1
 	results = {}
 	images_orig          = []
 	images_reconstructed = []
-	loss_total_training  = []
+	loss_total_train     = []
 	loss_total_test      = []
 	
 	# for memory reasons, split test set into minibatches
