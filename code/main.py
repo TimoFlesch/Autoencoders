@@ -10,6 +10,7 @@ import pickle
 import tensorflow as tf 
 import numpy      as np
 import sklearn.preprocessing as prep
+from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
 # custom
 from ae.runAE    import    runAE # autoencoder
@@ -60,10 +61,10 @@ tf.app.flags.DEFINE_string('nonlinearity',       'relu',
 
 
 # training
-tf.app.flags.DEFINE_float('learning_rate',     0.001, 
+tf.app.flags.DEFINE_float('learning_rate',     0.005, 
                             """ (float)   learning rate               """)
 
-tf.app.flags.DEFINE_integer('n_training_episodes',   20, 
+tf.app.flags.DEFINE_integer('n_training_episodes',   10, 
                             """ (int)    number of training episodes  """)
 
 tf.app.flags.DEFINE_integer('n_training_batches',   
