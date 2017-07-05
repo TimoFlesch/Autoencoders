@@ -1,10 +1,10 @@
 # Implementation of Various Autoencoders
 Contains tensorflow code to run
-- Autoencoder
-- Convolutional Autoencoder
-- Variational Autoencoder
-- Convolutional Variational Autoencoder
-- beta-Variational Autoencoder
+- [Autoencoder](https://github.com/triple-ratamacue/machinelearning_autoencoder_fun/tree/master/code/ae)
+- [Convolutional Autoencoder](https://github.com/triple-ratamacue/machinelearning_autoencoder_fun/tree/master/code/cae)
+- [Variational Autoencoder](https://github.com/triple-ratamacue/machinelearning_autoencoder_fun/tree/master/code/vae)
+- [Convolutional Variational Autoencoder](https://github.com/triple-ratamacue/machinelearning_autoencoder_fun/tree/master/code/cvae)
+- [beta-Variational Autoencoder](https://github.com/triple-ratamacue/machinelearning_autoencoder_fun/tree/master/code/bvae)
 
 All models are trained on the famous and boring MNIST dataset (suboptimal choice for the bVAE) 
 
