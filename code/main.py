@@ -15,7 +15,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 # custom
 from ae.runAE     import    runAE # autoencoder
 from cae.runCAE   import   runCAE # convolutional autoencoder
-# from vae   import   runVAE # variational autoencoder
+from vae.runVAE   import   runVAE # variational autoencoder
 # from vcae  import  runVCAE # variational convolutional autoencoder
 # from bvae  import  runbVAE # beta-VAE
 # from bvcae import runbVCAE # beta-VCAE

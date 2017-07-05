@@ -11,6 +11,7 @@ from cae.model          import         myModel
 from nntools.trainer    import      trainModel
 from nntools.evaluation import       evalModel
 from nntools.io         import     loadMyModel
+from datetime           import        datetime
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -32,8 +33,8 @@ def runCAE(x_train,x_test):
                            optimizer    =     FLAGS.optimizer,
                            nonlinearity =  FLAGS.nonlinearity,
                            )
-            print("Now training Convolutional Autoencoder, LR: {} , EPs: {}, BS: {}"
-                .format(FLAGS.learning_rate,FLAGS.n_training_episodes, FLAGS.batch_size))
+            print("{} Now training Convolutional Autoencoder, LR: {} , EPs: {}, BS: {}"
+                .format(datetime.now().strftime('%Y-%m-%d_%H%M%S'),FLAGS.learning_rate,FLAGS.n_training_episodes, FLAGS.batch_size))
             # initialize all variables
             nnet.init_graph_vars(sess,log_dir=log_dir_run)
             # train model

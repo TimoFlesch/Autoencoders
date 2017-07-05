@@ -1,5 +1,5 @@
 """
-implements a simple autoencoder
+implements a convolutional autoencoder
 Timo Flesch, 2017
 """
 
@@ -14,7 +14,7 @@ FLAGS = tf.app.flags.FLAGS
 
 class myModel(object):
     """
-    the autoencoder class
+    the convolutional autoencoder class
     """
 
     def __init__(self,

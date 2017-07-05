@@ -61,12 +61,12 @@ def trainModel(sess,nnet,x_train,x_test,n_episodes=100,n_batches=10,batch_size=1
 			for mb_test in minibatches_xTest:
 				loss = nnet.eval(mb_test,mb_test)
 				loss_test += loss
-			loss_test /= n_batches
+			loss_test /= len(minibatches_xTest)
 			loss_total_test.append(loss_test)
 
 			# log results to stdout
 			epTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-			print('{} Episode {} Training Loss {:1.5f} Test Loss {:1.5f} \n'.format(epTime, int(ep), loss_train, loss_test))
+			print('{} Episode {} Training Loss {:1.5f} Test Loss {:1.5f} \n'.format(epTime, int(ep)+1, loss_train, loss_test))
 
 	# write results to result dictionary and return
 	results = { 'loss_train' : loss_total_train,
