@@ -25,15 +25,29 @@ Call the respective runXY.py
 Change the training flag in main.py to False and call the respective runXY.py  
 
 ### Monitoring
-The code creates scalar and image summaries during training. use 
+The code creates scalar and image summaries during training.
 
+##### Local
+to start a monitoring session:
  ```
   tensorboard --logdir=path/to/log-directory --port=6006
  ```
 
- to start a monitoring session and navigate in your browser to 
+ then, navigate in browser to:
 
  ```
  0.0.0.0:6006
  ```
 to visualize the summaries and monitor the training process
+
+##### Remote
+to start monitoring session:
+```
+ssh -L 16006:127.0.0.1:6006 user@remote.machine
+tensorboard --logdir=path/to/log-directory --port=6006
+```
+then, navigate in browser of local machine (whilst ssh tunnel is open) to:
+```
+127.0.0.1:16006
+```
+

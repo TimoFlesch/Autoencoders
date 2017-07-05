@@ -13,8 +13,8 @@ import sklearn.preprocessing as prep
 from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
 # custom
-from ae.runAE    import    runAE # autoencoder
-# from cae   import   runCAE # convolutional autoencoder
+from ae.runAE     import    runAE # autoencoder
+from cae.runCAE   import   runCAE # convolutional autoencoder
 # from vae   import   runVAE # variational autoencoder
 # from vcae  import  runVCAE # variational convolutional autoencoder
 # from bvae  import  runbVAE # beta-VAE
@@ -44,7 +44,7 @@ tf.app.flags.DEFINE_integer('n_samples_test',  10000,
 
 
 # model
-tf.app.flags.DEFINE_string('model',                'ae', 
+tf.app.flags.DEFINE_string('model',                'cae', 
                             """ (string)  chosen model          """)
 
 tf.app.flags.DEFINE_bool('do_training',               1, 
@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_string('nonlinearity',       'relu',
 
 
 # training
-tf.app.flags.DEFINE_float('learning_rate',     0.005, 
+tf.app.flags.DEFINE_float('learning_rate',     0.001, 
                             """ (float)   learning rate               """)
 
 tf.app.flags.DEFINE_integer('n_training_episodes',   10, 
@@ -125,9 +125,9 @@ def main(argv=None):
         results = runbVCAE(x_train,x_test)
 
     if FLAGS.do_training:
-        logName = 'log_trainingsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
+        logName = FLAGS.log_dir + '/log_trainingsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
     else:
-         logName = 'log_evaluationsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
+         logName = FLAGS.log_dir + '/log_evaluationsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
 
     with open(logName,'wb') as f:
         pickle.dump(results,f,protocol=2)

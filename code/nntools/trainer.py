@@ -66,7 +66,7 @@ def trainModel(sess,nnet,x_train,x_test,n_episodes=100,n_batches=10,batch_size=1
 
 			# log results to stdout
 			epTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-			print('{} Episode {} Training Loss {:1.3f} Test Loss {:1.3f} \n'.format(epTime, int(ep), loss_train, loss_test))
+			print('{} Episode {} Training Loss {:1.5f} Test Loss {:1.5f} \n'.format(epTime, int(ep), loss_train, loss_test))
 
 	# write results to result dictionary and return
 	results = { 'loss_train' : loss_total_train,
