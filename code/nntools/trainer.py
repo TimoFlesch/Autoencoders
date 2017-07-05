@@ -49,7 +49,7 @@ def trainModel(sess,nnet,x_train,x_test,n_episodes=100,n_batches=10,batch_size=1
 		loss_total_train.append(loss_train)
 
 		# interim evaluation
-		if (ep%FLAGS.display_step):
+		if ((ep%FLAGS.display_step)==0):
 			# save model
 			nnet.save_ckpt(model_dir + '/')
 			# write reconstructed image to summary	
