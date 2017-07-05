@@ -17,7 +17,7 @@ FLAGS = tf.app.flags.FLAGS
 def runAE(x_train,x_test):
     # checkpoint run model folder
     ckpt_dir_run = FLAGS.ckpt_dir + 'model_' + FLAGS.model
-    log_dir_rung = FLAGS.log_dir+'model_'+FLAGS.model
+    log_dir_run  = FLAGS.log_dir+'model_'+FLAGS.model
 
     if not(tf.gfile.Exists(ckpt_dir_run)):
         tf.gfile.MakeDirs(ckpt_dir_run) 
