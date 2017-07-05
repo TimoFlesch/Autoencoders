@@ -17,9 +17,13 @@ FLAGS = tf.app.flags.FLAGS
 def runAE(x_train,x_test):
     # checkpoint run model folder
     ckpt_dir_run = FLAGS.ckpt_dir + 'model_' + FLAGS.model
+    log_dir_rung = FLAGS.log_dir+'model_'+FLAGS.model
 
     if not(tf.gfile.Exists(ckpt_dir_run)):
         tf.gfile.MakeDirs(ckpt_dir_run) 
+
+    if not(tf.gfile.Exists(log_dir_run)):
+        tf.gfile.MakeDirs(log_dir_run) 
 
     with tf.Session() as sess:      
 
@@ -30,7 +34,7 @@ def runAE(x_train,x_test):
                            )
             print("Now training Autoencoder")
             # initialize all variables
-            nnet.init_graph_vars(sess,log_dir=FLAGS.log_dir+'model_'+FLAGS.model)
+            nnet.init_graph_vars(sess,log_dir=log_dir_run)
             # train model
             results = trainModel(sess,nnet,x_train,x_test,
                 n_episodes  =  FLAGS.n_training_episodes,
