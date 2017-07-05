@@ -18,8 +18,8 @@ class myModel(object):
     """
 
     def __init__(self,
-        dim_inputs   =          [None,784],
-        dim_outputs  =          [None,784],
+        dim_inputs   =          [None,28,28,1],
+        dim_outputs  =          [None,28,28,1],
         n_hidden     =                 200,
         lr           =               0.005,
         optimizer    =           'RMSProp',
@@ -47,8 +47,8 @@ class myModel(object):
         if not(is_trained):
             # input placeholder
             with tf.name_scope('input'):
-                self.x = tf.placeholder(tf.float32,self.dim_inputs,name='x_in')
-                self.y_true = tf.placeholder(tf.float32,self.dim_outputs,name='y_true')
+                self.x = tf.placeholder(tf.float32,[None,784],name='x_in')
+                self.y_true = tf.placeholder(tf.float32,[None,784],name='y_true')
             
             # the neural network and label placeholder
             with tf.variable_scope('nnet'):
@@ -58,7 +58,8 @@ class myModel(object):
             with tf.name_scope('optimisation'):
                 # loss function
                 with tf.name_scope('loss-function'):
-                    self.loss = tf.reduce_mean(tf.pow(self.y_true-self.y_hat,2),name="loss")
+                    self.y_true_rs = tf.reshape(self.y_true,[-1,self.dim_inputs[1],self.dim_inputs[2],self.dim_inputs[3]],name="true_y")
+                    self.loss = tf.reduce_mean(tf.pow(self.y_true_rs-self.y_hat,2),name="loss")
 
                 # optimisation procedure
                 with tf.name_scope('optimizer'):
@@ -68,8 +69,8 @@ class myModel(object):
 
             # image reshaper
             with tf.name_scope('reshaper'):
-                self.visIMG_orig  = tf.reshape(self.x,[1,28,28,1],name='reshape_input')
-                self.visIMG_recon = tf.reshape(self.y_hat,[1,28,28,1],name='reshape_output')
+                self.visIMG_orig  = self.x_img # tf.reshape(self.x,[1,28,28,1],name='reshape_input')
+                self.visIMG_recon = self.y_hat # tf.reshape(self.y_hat,[1,28,28,1],name='reshape_output')
 
         else:
             self.init_done = True 
@@ -80,21 +81,25 @@ class myModel(object):
         
         # encoder 
         with tf.variable_scope('encoder'):
+            self.x_img = tf.reshape(self.x,[-1,self.dim_inputs[1],self.dim_inputs[2],self.dim_inputs[3]])
+            # for compatibility reasons, convert uint8 to float32 and rescale values
+            self.x_imgF = tf.to_float(self.x_img) / 255.0
             # first convolutional layer
-            self.l1_conv, self.params['l11_conv_weights'], self.params['l1_conv_biases'] self.params['l1_conv_shape'] = layer_conv2d(self.x,
+            self.l1_conv, self.params['l11_conv_weights'], self.params['l1_conv_biases'], self.params['l1_conv_shape'] = layer_conv2d(self.x_imgF,
                 32,(5,5),name='l1_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            print(self.params['l1_conv_shape'])
             # second convolutional layer
-            self.l2_conv, self.params['l12_conv_weights'], self.params['l2_conv_biases'] self.params['l2_conv_shape'] = layer_conv2d(self.l1_conv,
+            self.l2_conv, self.params['l12_conv_weights'], self.params['l2_conv_biases'], self.params['l2_conv_shape'] = layer_conv2d(self.l1_conv,
                 64,(5,5),name='l2_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            print(self.params['l2_conv_shape'])
 
-        
         # decoder 
         with tf.variable_scope('decoder'):            
-            self.l3_transconv, self.params['l3_transconv_weights'], self.params['l3_transconv_biases'] = layer_transconv2d(self.l2_conv,
+            self.l3_transconv, self.params['l3_transconv_weights'], self.params['l3_transconv_biases'] = layer_transpose_conv2d(self.l2_conv,
                 64,(5,5),shape=self.params['l2_conv_shape'],name='l3_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
 
-            self.y_hat, self.params['l4_transconv_weights'], self.params['l4_transconv_biases'] = layer_transconv2d(self.l3_transconv,
-                32,(5,5),shape=self.params['l1_conv_shape'],name='l3_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            self.y_hat, self.params['l4_transconv_weights'], self.params['l4_transconv_biases'] = layer_transpose_conv2d(self.l3_transconv,
+                32,(5,5),shape=self.params['l1_conv_shape'],name='l4_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
 
         return
 

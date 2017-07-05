@@ -32,7 +32,8 @@ def runAE(x_train,x_test):
                            optimizer    =     FLAGS.optimizer,
                            nonlinearity =  FLAGS.nonlinearity,
                            )
-            print("Now training Autoencoder")
+            print("Now training Autoencoder, LR: {} , EPs: {}, BS: {}"
+                .format(FLAGS.learning_rate,FLAGS.n_training_episodes, FLAGS.batch_size))
             # initialize all variables
             nnet.init_graph_vars(sess,log_dir=log_dir_run)
             # train model

@@ -35,9 +35,9 @@ def layer_conv2d(x,
 				bias_const  =      0.0,
 				initializer = tf.contrib.layers.xavier_initializer(),
 				nonlinearity =   None):
-"""
-wrapper for convolution
-"""
+	"""
+	wrapper for convolution
+	"""
 	
 	with tf.variable_scope(name):
 		
@@ -47,7 +47,7 @@ wrapper for convolution
 
 		weights = tf.get_variable('weights',kernel,tf.float32,initializer=initializer)
 		biases = tf.get_variable('biases',[n_filters],initializer=tf.constant_initializer(bias_const))
-		convolution = tf.nn.conv2d(x,w,stride,padding,data_format='NHWC')
+		convolution = tf.nn.conv2d(x,weights,stride,padding,data_format='NHWC')
 
 		y  = tf.nn.bias_add(convolution,biases,'NHWC')
 		
@@ -69,17 +69,17 @@ def layer_transpose_conv2d(x,
 				bias_const  =      0.0,
 				initializer = tf.contrib.layers.xavier_initializer(),
 				nonlinearity =   None):
-"""
-wrapper for transposed convolution
-"""
+	"""
+	wrapper for transposed convolution
+	"""
 	
 	with tf.variable_scope(name):
-		kernel = [filter_size[0],filter_size[1],x.get_shape()[-1],n_filters]
+		kernel = [filter_size[0],filter_size[1],shape[3],n_filters]
 		stride = [1,stride[0],stride[1],1]
 		out_dims = tf.stack([tf.shape(x)[0], shape[1], shape[2], shape[3]])
 		weights = tf.get_variable('weights',kernel,tf.float32,initializer=initializer)
-		biases = tf.get_variable('biases',[n_filters],initializer=tf.constant_initializer(bias_const))
-		convolution = tf.nn.conv2d_transpose(x,w,stride,padding,data_format='NHWC')
+		biases = tf.get_variable('biases',[shape[3]],initializer=tf.constant_initializer(bias_const))
+		convolution = tf.nn.conv2d_transpose(x,weights,out_dims,stride,padding,data_format='NHWC')
 
 		y  = tf.nn.bias_add(convolution,biases,'NHWC')
 		

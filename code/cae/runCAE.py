@@ -32,7 +32,8 @@ def runCAE(x_train,x_test):
                            optimizer    =     FLAGS.optimizer,
                            nonlinearity =  FLAGS.nonlinearity,
                            )
-            print("Now training Autoencoder")
+            print("Now training Convolutional Autoencoder, LR: {} , EPs: {}, BS: {}"
+                .format(FLAGS.learning_rate,FLAGS.n_training_episodes, FLAGS.batch_size))
             # initialize all variables
             nnet.init_graph_vars(sess,log_dir=log_dir_run)
             # train model
@@ -44,7 +45,7 @@ def runCAE(x_train,x_test):
 
         else:           
             nnet = myModel(is_trained=True)
-            print("Now evaluating Autoencoder")
+            print("Now evaluating Convolutional Autoencoder")
             ops = loadMyModel(sess,['nnet'],ckpt_dir_run)
             print(ops)
             nnet.y_hat = ops[0]
