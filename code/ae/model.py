@@ -68,8 +68,8 @@ class myModel(object):
 
             # image reshaper
             with tf.name_scope('reshaper'):
-                self.visIMG_orig  = tf.reshape(self.x,[1,28,28,1],name='reshape input')
-                self.visIMG_recon = tf.reshape(self.y_hat,[1,28,28,1],name='reshape output')
+                self.visIMG_orig  = tf.reshape(self.x,[1,28,28,1],name='reshape_input')
+                self.visIMG_recon = tf.reshape(self.y_hat,[1,28,28,1],name='reshape_output')
 
         else:
             self.init_done = True 
@@ -80,11 +80,13 @@ class myModel(object):
         
         # encoder 
         with tf.variable_scope('encoder'):
-            self.layer1, self.params['layer1_weights'], self.params['layer1_biases'] = layer_fc(self.x,self.n_hidden,0.0,'layer1',self.initializer,self.nonlinearity)
+            self.layer1, self.params['layer1_weights'], self.params['layer1_biases'] = layer_fc(self.x,
+                self.n_hidden,0.0,'layer1',self.initializer,self.nonlinearity)
         
         # decoder 
         with tf.variable_scope('decoder'):            
-            self.y_hat, self.params['layer2_weights'], self.params['layer2_biases'] = layer_fc(self.layer1,self.dim_outputs[1],0.0,'layer2',self.initializer,self.nonlinearity) 
+            self.y_hat, self.params['layer2_weights'], self.params['layer2_biases'] = layer_fc(self.layer1,
+                self.dim_outputs[1],0.0,'layer2',self.initializer,self.nonlinearity) 
 
         return
 
@@ -128,14 +130,16 @@ class myModel(object):
 
     def inference(self,x):
         """ forward pass of x through myModel """
-        y_hat = self.session.run(self.y_hat,feed_dict={self.x: np.expand_dims(x,axis=0)})
+        if x.ndim==1:
+            x = np.expand_dims(x,axis=0)            
+        y_hat = self.session.run(self.y_hat,feed_dict={self.x: x})
         return y_hat
 
 
     def train(self,x,y_true):
         """ training step """ 
-        _,loss,summary_train = self.session.run([self.train_step,self.loss,self.summaryTraining],feed_dict={self.x:            x,
-                                       self.y_true: y_true})
+        _,loss,summary_train = self.session.run([self.train_step,self.loss,self.summaryTraining],
+            feed_dict={self.x: x,self.y_true: y_true})
         self.writer.add_summary(summary_train,self.ITER)
         self.ITER +=1 # count one iteration up
         return loss
@@ -143,13 +147,17 @@ class myModel(object):
 
     def eval(self,x,y_true):
         """ evaluation step """
-        y_hat,loss,summary_test = self.session.run([self.y_hat,self.loss,self.summaryTest],feed_dict={self.x:            x,
-                                    self.y_true: y_true})
+        y_hat,loss,summary_test = self.session.run([self.y_hat,self.loss,self.summaryTest],
+            feed_dict={self.x: x,self.y_true: y_true})
         self.writer.add_summary(summary_test,self.ITER)
         return loss
 
     def reconstruct(self,x):
-        imgOrig,imgRecon = self.session.run([self.summaryImgOrig,self.summaryImgRecon],feed_dict={self.x: np.expand_dims(x,axis=0)})
+        if x.ndim==1:
+            x = np.expand_dims(x,axis=0)
+        imgOrig,imgRecon = self.session.run([self.summaryImgOrig,self.summaryImgRecon],
+            feed_dict={self.x: x})
         self.writer.add_summary(imgOrig,self.ITER)
         self.writer.add_summary(imgRecon,self.ITER)
+
 

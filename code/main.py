@@ -6,6 +6,7 @@ Timo Flesch, 2017
 """
 
 # external
+import pickle 
 import tensorflow as tf 
 import numpy      as np
 import sklearn.preprocessing as prep
@@ -110,19 +111,25 @@ def main(argv=None):
 
     # run selected model
     if FLAGS.model=='ae':
-        runAE(x_train,x_test)
+        results =    runAE(x_train,x_test)
     elif FLAGS.model=='cae':
-        runCAE(x_train,x_test)
+        results =   runCAE(x_train,x_test)
     elif FLAGS.model=='vae':
-        runVAE(x_train,x_test)
+        results =   runVAE(x_train,x_test)
     elif FLAGS.model=='vcae':
-        runVCAE(x_train,x_test)
+        results =  runVCAE(x_train,x_test)
     elif FLAGS.model=='bvae':
-        runbVAE(x_train,x_test)
+        results =  runbVAE(x_train,x_test)
     elif FLAGS.model=='bvcae':
-        runbVCAE(x_train,x_test)
+        results = runbVCAE(x_train,x_test)
 
+    if FLAGS.do_training:
+        logName = 'log_trainingsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    else:
+         logName = 'log_evaluationsess_mod_' + FLAGS.model + '_' + datetime.now().strftime('%Y-%m-%d_%H%M%S')
 
+    with open(logName,'wb') as f:
+        pickle.dump(results,f,protocol=2)
 
 
 if __name__ == '__main__':

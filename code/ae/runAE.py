@@ -47,6 +47,8 @@ def runAE(x_train,x_test):
 
             results = evalModel(sess,nnet)
 
+        return results
+
 
 
 
