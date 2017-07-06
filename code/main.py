@@ -44,7 +44,7 @@ tf.app.flags.DEFINE_integer('n_samples_test',  10000,
 
 
 # model
-tf.app.flags.DEFINE_string('model',                'cae', 
+tf.app.flags.DEFINE_string('model',                'vae', 
                             """ (string)  chosen model          """)
 
 tf.app.flags.DEFINE_bool('do_training',               1, 
@@ -53,7 +53,7 @@ tf.app.flags.DEFINE_bool('do_training',               1,
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
                             """ (float)   initial weight mean   """)
 
-tf.app.flags.DEFINE_float('weight_init_std',        .05, 
+tf.app.flags.DEFINE_float('weight_init_std',        .0001, 
                             """ (float)   initial weight std    """)
 
 tf.app.flags.DEFINE_string('nonlinearity',       'relu', 
@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_string('nonlinearity',       'relu',
 
 
 # training
-tf.app.flags.DEFINE_float('learning_rate',     0.001, 
+tf.app.flags.DEFINE_float('learning_rate',     0.01, 
                             """ (float)   learning rate               """)
 
 tf.app.flags.DEFINE_integer('n_training_episodes',   10, 
@@ -106,7 +106,9 @@ def main(argv=None):
     # import data
     mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot = True) 
     # scale data appropriately
-    x_train, x_test = normalizeData(mnist.train.images, mnist.test.images)
+    #x_train, x_test = normalizeData(mnist.train.images, mnist.test.images)
+    x_train = mnist.train.images
+    x_test = mnist.test.images
     x_train,_ = shuffleData(x_train)
     
 

@@ -26,12 +26,16 @@ def runVAE(x_train,x_test):
     if not(tf.gfile.Exists(log_dir_run)):
         tf.gfile.MakeDirs(log_dir_run) 
 
+    # adjust data
+    x_train = x_train.astype('float32') / 255
+    x_test  = x_test.astype('float32') / 255
+
     with tf.Session() as sess:      
 
         if FLAGS.do_training:
             nnet = myModel(lr           = FLAGS.learning_rate,
                            optimizer    =     FLAGS.optimizer,
-                           nonlinearity =  FLAGS.nonlinearity,
+                           nonlinearity = FLAGS.nonlinearity,
                            )
             print("{} Now training Variational Autoencoder, LR: {} , EPs: {}, BS: {}"
                 .format(datetime.now().strftime('%Y-%m-%d_%H%M%S'),FLAGS.learning_rate,FLAGS.n_training_episodes, FLAGS.batch_size))

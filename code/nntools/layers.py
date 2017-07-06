@@ -12,6 +12,9 @@ def layer_fc(x,
 			name         = 'linear',
 			initializer  = tf.contrib.layers.xavier_initializer(),#tf.random_normal_initializer(0.05),
 			nonlinearity =    None):
+	"""
+	simple fully connected layer with optional nonlinearity
+	"""
 
 	with tf.variable_scope(name):
 		weights = tf.get_variable('weights',[x.get_shape().as_list()[1],dim_y],tf.float32, initializer=initializer)
@@ -19,6 +22,34 @@ def layer_fc(x,
 		biases  = tf.get_variable('biases',[dim_y],initializer=tf.constant_initializer(bias_const))
 
 		y = tf.nn.bias_add(tf.matmul(x,weights),biases)
+		if nonlinearity != None:
+			y = nonlinearity(y)
+
+		return y,weights,biases
+
+def layer_fc_bn(x,
+			dim_y,			
+			bias_const   =         0.0,     # bias 
+			name_fc      =    'linear',  # fc var scope
+			name_bn      = 'batch_norm', # bn var scope
+			phase        =         True, # is_training
+			initializer  = tf.contrib.layers.xavier_initializer(),#tf.random_normal_initializer(0.05),
+			nonlinearity =    None):
+	"""
+	simple fully connected layer with Batch Normalisation and optional nonlinearity
+	"""
+
+	with tf.variable_scope(name_fc):
+		weights = tf.get_variable('weights',[x.get_shape().as_list()[1],dim_y],tf.float32, initializer=initializer)
+
+		biases  = tf.get_variable('biases',[dim_y],initializer=tf.constant_initializer(bias_const))
+
+		y_fc = tf.nn.bias_add(tf.matmul(x,weights),biases)
+
+
+	with tf.variable_scope(name_bn):
+		y = tf.contrib.layers.batch_norm(y_fc,center=True, scale=True, is_training=phase)
+
 		if nonlinearity != None:
 			y = nonlinearity(y)
 
