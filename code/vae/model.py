@@ -62,10 +62,11 @@ class myModel(object):
                 with tf.name_scope('loss-function'):
                     # "normal" loss term:
                     #reconstruction_loss = 0.5* tf.reduce_sum(tf.pow(self.y_true-self.y_hat,2))
+                    self.y_hat =  tf.clip_by_value(self.y_hat, 1e-7, 1 - 1e7,name='avoidNaN') # try to avoid nans
                     reconstruction_loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.y_hat, labels=self.y_true), reduction_indices=1)
                     # KL-divergence term:
-                    latent_loss  = - -0.5 * tf.reduce_sum(1 + self.layer_latent_logsd
-                        -tf.square(self.layer_latent_mu)-tf.exp(self.layer_latent_logsd), 1)
+                    latent_loss  = - -0.5 * tf.reduce_sum(1 + 2*self.layer_latent_logsd
+                        -tf.square(self.layer_latent_mu)-tf.exp(2*self.layer_latent_logsd), 1)
                     self.loss = tf.reduce_mean(reconstruction_loss+latent_loss,name="loss")
 
                 # optimisation procedure
