@@ -101,11 +101,11 @@ class myModel(object):
         # encoder 
         with tf.variable_scope('encoder'):
             # input to hidden layer 1, with batch normalisation
-            self.layer_enc_hidden1, self.params['layer_enc_hidden1_weights'], self.params['layer_enc_hidden1_biases'] = layer_fc_bn(self.x,
-                self.n_hidden,0.1,'layer_enc_hidden1','layer_enc_hidden1_bn',self.phase,self.initializer,self.nonlinearity)
+            self.layer_enc_hidden1, self.params['layer_enc_hidden1_weights'], self.params['layer_enc_hidden1_biases'] = layer_fc(self.x,
+                self.n_hidden,0.1,'layer_enc_hidden1',self.initializer,self.nonlinearity)
             # hidden 1 to hidden 2, with batch normalisation
-            self.layer_enc_hidden2, self.params['layer_enc_hidden2_weights'], self.params['layer_enc_hidden2_biases'] = layer_fc_bn(self.layer_enc_hidden1,
-                self.n_hidden,0.1,'layer_enc_hidden2_fc','layer_enc_hidden2_bn',self.phase,self.initializer,self.nonlinearity)
+            self.layer_enc_hidden2, self.params['layer_enc_hidden2_weights'], self.params['layer_enc_hidden2_biases'] = layer_fc(self.layer_enc_hidden1,
+                self.n_hidden,0.1,'layer_enc_hidden2_fc',self.initializer,self.nonlinearity)
 
         # sampler 
         with tf.variable_scope('latent'):
@@ -129,11 +129,11 @@ class myModel(object):
         # decoder 
         with tf.variable_scope('decoder'):            
             # latent to hidden, with batch normalisation
-            self.layer_dec_hidden1, self.params['layer_dec_hidden1_weights'], self.params['layer_dec_hidden1_biases'] = layer_fc_bn(self.z,
-                self.n_hidden,0.1,'layer_dec_hidden1_fc','layer_dec_hidden1_bn',self.phase,self.initializer,self.nonlinearity) 
+            self.layer_dec_hidden1, self.params['layer_dec_hidden1_weights'], self.params['layer_dec_hidden1_biases'] = layer_fc(self.z,
+                self.n_hidden,0.1,'layer_dec_hidden1_fc',self.initializer,self.nonlinearity) 
             # hidden to output, with batch normalisation
-            self.y_hat_logit, self.params['layer_dec_hidden2_weights'], self.params['layer_dec_hidden2_biases'] = layer_fc_bn(self.layer_dec_hidden1,
-                self.dim_outputs[1],0.1,'layer_dec_hidden2_fc','layer_dec_hidden2_bn',self.phase,self.initializer)
+            self.y_hat_logit, self.params['layer_dec_hidden2_weights'], self.params['layer_dec_hidden2_biases'] = layer_fc(self.layer_dec_hidden1,
+                self.dim_outputs[1],0.1,'layer_dec_hidden2_fc',self.initializer)
 
             # squashed
             with tf.variable_scope('sigmoid_squashing'):

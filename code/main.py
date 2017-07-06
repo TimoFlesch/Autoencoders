@@ -53,7 +53,7 @@ tf.app.flags.DEFINE_bool('do_training',               1,
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
                             """ (float)   initial weight mean   """)
 
-tf.app.flags.DEFINE_float('weight_init_std',        .0001, 
+tf.app.flags.DEFINE_float('weight_init_std',        .1, 
                             """ (float)   initial weight std    """)
 
 tf.app.flags.DEFINE_string('nonlinearity',       'relu', 
@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_string('nonlinearity',       'relu',
 
 
 # training
-tf.app.flags.DEFINE_float('learning_rate',     0.01, 
+tf.app.flags.DEFINE_float('learning_rate',     0.001, 
                             """ (float)   learning rate               """)
 
 tf.app.flags.DEFINE_integer('n_training_episodes',   10, 
