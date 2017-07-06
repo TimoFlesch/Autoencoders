@@ -20,8 +20,8 @@ class myModel(object):
     def __init__(self,
         dim_inputs   =          [None,784],
         dim_outputs  =          [None,784],
-        n_hidden     =                 256,
-        n_latent     =                   2,
+        n_hidden     =                 128,
+        n_latent     =                  40,
         lr           =               0.005,
         optimizer    =           'RMSProp',
         nonlinearity =              'relu',
@@ -62,7 +62,7 @@ class myModel(object):
                 with tf.name_scope('loss-function'):
                     # "normal" loss term:
                     #reconstruction_loss = 0.5* tf.reduce_sum(tf.pow(self.y_true-self.y_hat,2))
-                    self.y_hat =  tf.clip_by_value(self.y_hat, 1e-7, 1 - 1e7,name='avoidNaN') # try to avoid nans
+                    self.y_hat =  tf.clip_by_value(self.y_hat, 1e-10, 1 - 1e10,name='avoidNaN') # try to avoid nans
                     reconstruction_loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.y_hat, labels=self.y_true), reduction_indices=1)
                     # KL-divergence term:
                     latent_loss  = - -0.5 * tf.reduce_sum(1 + 2*self.layer_latent_logsd

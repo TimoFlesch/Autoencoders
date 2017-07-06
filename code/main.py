@@ -77,7 +77,7 @@ tf.app.flags.DEFINE_integer('display_step',         1,
 tf.app.flags.DEFINE_integer('batch_size',         128, 
                             """ (int)     training batch size         """)
 
-tf.app.flags.DEFINE_string('optimizer',       'RMSProp', 
+tf.app.flags.DEFINE_string('optimizer',       'Adam', 
                             """ (string)   optimisation procedure     """)
 
 

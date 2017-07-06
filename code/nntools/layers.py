@@ -10,7 +10,7 @@ def layer_fc(x,
 			dim_y,			
 			bias_const   =      0.0,
 			name         = 'linear',
-			initializer  = tf.random_normal_initializer(0.05),
+			initializer  = tf.contrib.layers.xavier_initializer(),#tf.random_normal_initializer(0.05),
 			nonlinearity =    None):
 
 	with tf.variable_scope(name):
