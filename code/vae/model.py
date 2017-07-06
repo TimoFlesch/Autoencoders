@@ -121,7 +121,7 @@ class myModel(object):
                 self.n_hidden,0.0,'layer_dec_hidden1',self.initializer,self.nonlinearity) 
             # hidden to output
             self.y_hat, self.params['layer_dec_hidden2_weights'], self.params['layer_dec_hidden2_biases'] = layer_fc(self.layer_dec_hidden1,
-                self.dim_outputs[1],0.0,'layer_dec_hidden2',self.initializer,self.nonlinearity) 
+                self.dim_outputs[1],0.0,'layer_dec_hidden2',self.initializer,tf.nn.sigmoid) 
 
         return
 
