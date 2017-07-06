@@ -100,11 +100,11 @@ class myModel(object):
             with tf.variable_scope('latent_mu'):
                 # hidden to latent layer
                 self.layer_latent_mu, self.params['layer_latent_mu_weights'], self.params['layer_latent_mu_biases'] = layer_fc(self.layer_enc_hidden2,
-                    self.n_latent,0.0,'layer_latent_mu',self.initializer,self.nonlinearity)
+                    self.n_latent,0.0,'layer_latent_mu',self.initializer)
 
             with tf.variable_scope('latent_logsd'):
                 self.layer_latent_logsd, self.params['layer_latent_logsd_weights'], self.params['layer_latent_logsd_biases'] = layer_fc(self.layer_enc_hidden2,
-                    self.n_latent,0.0,'layer_latent_logsd',self.initializer,self.nonlinearity)
+                    self.n_latent,0.0,'layer_latent_logsd',self.initializer)
 
             with tf.variable_scope('latent_sampler'):
                 # sample values from standard normal (first dim=batchsize)  
