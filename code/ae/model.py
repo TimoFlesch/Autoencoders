@@ -82,11 +82,23 @@ class myModel(object):
         with tf.variable_scope('encoder'):
             self.layer1, self.params['layer1_weights'], self.params['layer1_biases'] = layer_fc(self.x,
                 self.n_hidden,0.0,'layer1',self.initializer,self.nonlinearity)
+
+            self.layer2, self.params['layer2_weights'], self.params['layer2_biases'] = layer_fc(self.layer1,
+                self.n_hidden,0.0,'layer2',self.initializer,self.nonlinearity)
+
+            self.layer3, self.params['layer3_weights'], self.params['layer3_biases'] = layer_fc(self.layer2,
+                10,0.0,'layer3',self.initializer,self.nonlinearity)
         
         # decoder 
         with tf.variable_scope('decoder'):            
-            self.y_hat, self.params['layer2_weights'], self.params['layer2_biases'] = layer_fc(self.layer1,
-                self.dim_outputs[1],0.0,'layer2',self.initializer,self.nonlinearity) 
+            self.layer4, self.params['layer4_weights'], self.params['layer4_biases'] = layer_fc(self.layer3,
+                self.n_hidden,0.0,'layer4',self.initializer,self.nonlinearity)
+                    
+            self.layer5, self.params['layer5_weights'], self.params['layer5_biases'] = layer_fc(self.layer4,
+                self.dim_outputs[1],0.0,'layer5',self.initializer,self.nonlinearity) 
+
+            self.y_hat, self.params['y_hat_weights'], self.params['y_hat_biases'] = layer_fc(self.layer5,
+                self.dim_outputs[1],0.0,'y_hat',self.initializer,tf.nn.sigmoid) 
 
         return
 

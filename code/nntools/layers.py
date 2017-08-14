@@ -4,6 +4,31 @@ Timo Flesch, 2017
 """
 import tensorflow as tf
 from tensorflow.contrib.layers.python.layers import initializers 
+from tensorflow.contrib.keras                import layers
+
+
+def layer_dropout(x,
+                keep_prob = 1.0,
+                name='dropout'):
+    """
+    dropout layer
+    """
+    with tf.variable_scope(name):
+        y = tf.nn.dropout(x, keep_prob)
+        return y
+
+
+
+def layer_flatten(x,
+                name = 'flatten'):
+    """
+    flattens the output of a conv/maxpool layer
+    """
+    with tf.variable_scope(name):
+        # shape_in = x.get_shape().as_list()
+        # y = tf.reshape(x,[-1, shape_in[1]*shape_in[2]*shape_in[3]])
+        y = tf.contrib.layers.flatten(x)
+        return y
 
 
 def layer_fc(x,
@@ -89,6 +114,24 @@ def layer_conv2d(x,
 
 
 
+def layer_max_pool_2x2(x,
+                    filter_size = (2,2),
+                    stride = (2,2),
+                    padding='SAME',
+                    name='maxpool_2x2'):
+
+    """
+    wrapper for max pool operation
+    """
+    with tf.variable_scope(name):
+        kernel = [1,filter_size[0],filter_size[1],1]
+        stride = [1,stride[0],stride[1],1]
+        shape = x.get_shape().as_list()
+
+        y = tf.nn.max_pool(x, kernel, stride, padding) 
+        return y,shape
+
+
 
 def layer_transpose_conv2d(x,
 				n_filters   =       32,
@@ -113,8 +156,22 @@ def layer_transpose_conv2d(x,
 		convolution = tf.nn.conv2d_transpose(x,weights,out_dims,stride,padding,data_format='NHWC')
 
 		y  = tf.nn.bias_add(convolution,biases,'NHWC')
-		
+		shape = x.get_shape().as_list()
 		if nonlinearity != None:
 			y = nonlinearity(y)
 
-		return y,weights,biases 
+		return y,weights,biases,shape
+
+
+def layer_upsampling_2D(x,
+	filter_size = (2,2),
+	name = 'upsampling_2D'):
+	"""
+	wrapper for Keras' upsampling2D layer
+	with import from tn.nn.contrib.keras
+	"""
+
+	with tf.variable_scope(name):
+		y = layers.UpSampling2D(filter_size)(x)
+
+		return y

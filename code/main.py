@@ -16,9 +16,9 @@ from tensorflow.examples.tutorials.mnist import input_data
 from ae.runAE     import    runAE # autoencoder
 from cae.runCAE   import   runCAE # convolutional autoencoder
 from vae.runVAE   import   runVAE # variational autoencoder
-# from vcae  import  runVCAE # variational convolutional autoencoder
+from cvae.runCVAE  import  runCVAE # variational convolutional autoencoder
 # from bvae  import  runbVAE # beta-VAE
-# from bvcae import runbVCAE # beta-VCAE
+# from bvcae import runbCVAE # beta-VCAE
 
 
 # -- define flags --
@@ -36,7 +36,7 @@ tf.app.flags.DEFINE_string('log_dir',          './log/',
 
 
 # dataset
-tf.app.flags.DEFINE_integer('n_samples_train', 50000, 
+tf.app.flags.DEFINE_integer('n_samples_train', 55000, 
                            """ (int) number of training samples """)
 
 tf.app.flags.DEFINE_integer('n_samples_test',  10000,  
@@ -44,7 +44,7 @@ tf.app.flags.DEFINE_integer('n_samples_test',  10000,
 
 
 # model
-tf.app.flags.DEFINE_string('model',                'vae', 
+tf.app.flags.DEFINE_string('model',                'cae', 
                             """ (string)  chosen model          """)
 
 tf.app.flags.DEFINE_bool('do_training',               1, 
@@ -53,12 +53,17 @@ tf.app.flags.DEFINE_bool('do_training',               1,
 tf.app.flags.DEFINE_float('weight_init_mu',         0.0, 
                             """ (float)   initial weight mean   """)
 
-tf.app.flags.DEFINE_float('weight_init_std',        .1, 
+tf.app.flags.DEFINE_float('weight_init_std',        .001, 
                             """ (float)   initial weight std    """)
 
 tf.app.flags.DEFINE_string('nonlinearity',       'relu', 
                             """ (string)  activation function   """)
 
+tf.app.flags.DEFINE_integer('n_hidden',             200,
+                            """ dimensionality of hidden layers """)
+
+tf.app.flags.DEFINE_integer('n_latent',             2,
+                            """ dimensionality of latent layer """)
 
 # training
 tf.app.flags.DEFINE_float('learning_rate',     0.001, 
@@ -67,19 +72,23 @@ tf.app.flags.DEFINE_float('learning_rate',     0.001,
 tf.app.flags.DEFINE_integer('n_training_episodes',   10, 
                             """ (int)    number of training episodes  """)
 
-tf.app.flags.DEFINE_integer('n_training_batches',   
-                            int(FLAGS.n_samples_train/FLAGS.n_training_episodes), 
-                            """    number of training batches per ep  """)
 
 tf.app.flags.DEFINE_integer('display_step',         1, 
                             """(int) episodes until training log      """)
 
-tf.app.flags.DEFINE_integer('batch_size',         128, 
+tf.app.flags.DEFINE_integer('batch_size',         100, 
                             """ (int)     training batch size         """)
 
 tf.app.flags.DEFINE_string('optimizer',       'Adam', 
                             """ (string)   optimisation procedure     """)
 
+tf.app.flags.DEFINE_integer('n_training_batches',   
+                            int(FLAGS.n_samples_train/FLAGS.batch_size), 
+                            """    number of training batches per ep  """)
+
+tf.app.flags.DEFINE_integer('n_test_batches',   
+                            int(FLAGS.n_samples_test/FLAGS.batch_size), 
+                            """    number of test batches per ep  """)
 
 
 
@@ -107,9 +116,10 @@ def main(argv=None):
     mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot = True) 
     # scale data appropriately
     #x_train, x_test = normalizeData(mnist.train.images, mnist.test.images)
-    x_train = mnist.train.images
-    x_test = mnist.test.images
+    x_train = mnist.train.images  #.astype('float32') / 255.
+    x_test = mnist.test.images  #.astype('float32') / 255.
     x_train,_ = shuffleData(x_train)
+    print(np.max(x_train[0,:]))
     
 
     # run selected model
@@ -119,11 +129,11 @@ def main(argv=None):
         results =   runCAE(x_train,x_test)
     elif FLAGS.model=='vae':
         results =   runVAE(x_train,x_test)
-    elif FLAGS.model=='vcae':
-        results =  runVCAE(x_train,x_test)
+    elif FLAGS.model=='cvae':
+        results =  runCVAE(x_train,x_test)
     elif FLAGS.model=='bvae':
         results =  runbVAE(x_train,x_test)
-    elif FLAGS.model=='bvcae':
+    elif FLAGS.model=='bcvae':
         results = runbVCAE(x_train,x_test)
 
     if FLAGS.do_training:

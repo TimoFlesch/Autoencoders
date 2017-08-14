@@ -35,9 +35,13 @@ class myModel(object):
         self.dim_outputs    = dim_outputs
         self.n_hidden       =    n_hidden
         
-        self.nonlinearity   =             getattr(tf.nn,nonlinearity)
-        self.initializer    = tf.truncated_normal_initializer(FLAGS.weight_init_mu, 
-                                FLAGS.weight_init_std)        
+        if nonlinearity != None:
+            self.nonlinearity   =  getattr(tf.nn,nonlinearity)
+        else:
+            self.nonlinearity   = nonlinearity
+        
+        self.initializer    = tf.contrib.layers.variance_scaling_initializer(factor=2.0,mode='FAN_IN',uniform=False) 
+        #tf.truncated_normal_initializer(FLAGS.weight_init_mu, FLAGS.weight_init_std)        
 
         # dictionary for all parameters (weights + biases)
         self.params        =  {}
@@ -58,8 +62,9 @@ class myModel(object):
             with tf.name_scope('optimisation'):
                 # loss function
                 with tf.name_scope('loss-function'):
-                    self.y_true_rs = tf.reshape(self.y_true,[-1,self.dim_inputs[1],self.dim_inputs[2],self.dim_inputs[3]],name="true_y")
-                    self.loss = tf.reduce_mean(tf.pow(self.y_true_rs-self.y_hat,2),name="loss")
+                    # self.y_true_rs = tf.reshape(self.y_true,[-1,self.dim_inputs[1],self.dim_inputs[2],self.dim_inputs[3]],name="true_y")
+                    # self.loss = tf.reduce_mean(tf.pow(self.y_true-self.y_hat,2),name="loss")
+                    self.loss = -tf.reduce_mean(self.y_true*tf.log(1e-10+self.y_hat)+(1-self.y_true)*tf.log(1e-10+1-self.y_hat),name='loss')
 
                 # optimisation procedure
                 with tf.name_scope('optimizer'):
@@ -69,8 +74,8 @@ class myModel(object):
 
             # image reshaper
             with tf.name_scope('reshaper'):
-                self.visIMG_orig  = self.x_img # tf.reshape(self.x,[1,28,28,1],name='reshape_input')
-                self.visIMG_recon = self.y_hat # tf.reshape(self.y_hat,[1,28,28,1],name='reshape_output')
+                self.visIMG_orig  = tf.reshape(self.x_img,[1,28,28,1],name='reshape_input')
+                self.visIMG_recon =tf.reshape(self.y_hat,[1,28,28,1],name='reshape_output')
 
         else:
             self.init_done = True 
@@ -82,24 +87,35 @@ class myModel(object):
         # encoder 
         with tf.variable_scope('encoder'):
             self.x_img = tf.reshape(self.x,[-1,self.dim_inputs[1],self.dim_inputs[2],self.dim_inputs[3]])
-            # for compatibility reasons, convert uint8 to float32 and rescale values
-            self.x_imgF = tf.to_float(self.x_img) / 255.0
+            # for compatibility reasons, convert uint8 to float32 and rescale values            
             # first convolutional layer
-            self.l1_conv, self.params['l11_conv_weights'], self.params['l1_conv_biases'], self.params['l1_conv_shape'] = layer_conv2d(self.x_imgF,
-                32,(5,5),name='l1_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            self.l1_conv, self.params['l11_conv_weights'], self.params['l1_conv_biases'], self.params['l1_conv_shape'] = layer_conv2d(self.x_img,
+                16,(5,5),name='l1_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
             print(self.params['l1_conv_shape'])
             # second convolutional layer
             self.l2_conv, self.params['l12_conv_weights'], self.params['l2_conv_biases'], self.params['l2_conv_shape'] = layer_conv2d(self.l1_conv,
-                64,(5,5),name='l2_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+                32,(3,3),name='l2_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
             print(self.params['l2_conv_shape'])
+            # second convolutional layer
+            self.l3_conv, self.params['l13_conv_weights'], self.params['l3_conv_biases'], self.params['l3_conv_shape'] = layer_conv2d(self.l2_conv,
+                32,(3,3),name='l3_conv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            print(self.params['l3_conv_shape'])
 
         # decoder 
         with tf.variable_scope('decoder'):            
-            self.l3_transconv, self.params['l3_transconv_weights'], self.params['l3_transconv_biases'] = layer_transpose_conv2d(self.l2_conv,
-                64,(5,5),shape=self.params['l2_conv_shape'],name='l3_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            self.l4_transconv, self.params['l4_transconv_weights'], self.params['l4_transconv_biases'], self.params['l4_transconv_shape'] = layer_transpose_conv2d(self.l3_conv,
+                32,(3,3),shape=self.params['l3_conv_shape'],name='l4_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            print(self.params['l4_transconv_shape'])
 
-            self.y_hat, self.params['l4_transconv_weights'], self.params['l4_transconv_biases'] = layer_transpose_conv2d(self.l3_transconv,
-                32,(5,5),shape=self.params['l1_conv_shape'],name='l4_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            self.l5_transconv, self.params['l5_transconv_weights'], self.params['l5_transconv_biases'], self.params['l5_transconv_shape'] = layer_transpose_conv2d(self.l4_transconv,
+                32,(3,3),shape=self.params['l2_conv_shape'],name='l5_transconv',nonlinearity=self.nonlinearity,stride=(2,2),padding='SAME')
+            print(self.params['l5_transconv_shape'])
+
+            self.l6_transconv, self.params['l6_transconv_weights'], self.params['l6_transconv_biases'], self.params['l6_transconv_shape'] = layer_transpose_conv2d(self.l5_transconv,
+                16,(5,5),shape=self.params['l1_conv_shape'],name='l6_transconv',nonlinearity=tf.nn.sigmoid,stride=(2,2),padding='SAME')
+
+            self.y_hat = layer_flatten(self.l6_transconv)
+            
 
         return
 
@@ -146,6 +162,7 @@ class myModel(object):
         if x.ndim==1:
             x = np.expand_dims(x,axis=0)            
         y_hat = self.session.run(self.y_hat,feed_dict={self.x: x})
+        print(np.asarray(y_hat).shape)
         return y_hat
 
 
