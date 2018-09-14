@@ -4,7 +4,6 @@ Contains tensorflow code to run
 - [Convolutional Autoencoder](code/cae)
 - [Variational Autoencoder](code/vae)
 - [Convolutional Variational Autoencoder](code/cvae)
-- [beta-Variational Autoencoder](code/bvae)
 
 All models are trained on the famous and boring MNIST dataset (suboptimal choice for the bVAE) 
 
